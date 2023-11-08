@@ -423,6 +423,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createRapidScanReportString = exports.TABLE_HEADER = void 0;
 const report_1 = __nccwpck_require__(2198);
+const core_1 = __nccwpck_require__(2186);
 exports.TABLE_HEADER = '| Policies Violated | Dependency | License(s) | Vulnerabilities | Short Term Recommended Upgrade | Long Term Recommended Upgrade |\r\n' + '|-|-|-|-|-|-|\r\n';
 function createRapidScanReportString(policyViolations, policyCheckWillFail) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -443,9 +444,15 @@ function createRapidScanReportString(policyViolations, policyCheckWillFail) {
 }
 exports.createRapidScanReportString = createRapidScanReportString;
 function createComponentRow(component) {
+    //Debug: Print out all parts of the component
+    (0, core_1.debug)("Debugging component");
+    (0, core_1.debug)(component.name);
+    (0, core_1.debug)(component.violatedPolicies.join(','));
     const violatedPolicies = component.violatedPolicies.join('<br/>');
     const componentInViolation = (component === null || component === void 0 ? void 0 : component.href) ? `[${component.name}](${component.href})` : component.name;
+    (0, core_1.debug)(component.licenses.map(license => license.name).join(','));
     const componentLicenses = component.licenses.map(license => `${license.violatesPolicy ? ':x: &nbsp; ' : ''}[${license.name}](${license.href})`).join('<br/>');
+    (0, core_1.debug)(component.vulnerabilities.map(vulnerability => vulnerability.name).join(','));
     const vulnerabilities = component.vulnerabilities.map(vulnerability => `${vulnerability.violatesPolicy ? ':x: &nbsp; ' : ''}[${vulnerability.name}](${vulnerability.href})${vulnerability.cvssScore && vulnerability.severity ? ` ${vulnerability.severity}: CVSS ${vulnerability.cvssScore}` : ''}`).join('<br/>');
     const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
     const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
