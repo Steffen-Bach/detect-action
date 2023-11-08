@@ -338,6 +338,7 @@ function createComponentReport(violation, componentVersion, upgradeGuidance, vul
     return {
         violatedPolicies: violation.violatingPolicies,
         name: `${violation.componentName} ${violation.versionName}`,
+        externalId: violation.externalId,
         href: componentVersion === null || componentVersion === void 0 ? void 0 : componentVersion._meta.href,
         licenses: createComponentLicenseReports(violation.policyViolationLicenses, componentVersion),
         vulnerabilities: createComponentVulnerabilityReports(violation.policyViolationVulnerabilities, vulnerabilities),
@@ -448,13 +449,17 @@ function createComponentRow(component) {
         //Debug: Print out all parts of the component
         (0, core_1.debug)('Debugging component');
         (0, core_1.debug)(component.name);
-        (0, core_1.debug)(component.violatedPolicies.map(function (elem) {
+        (0, core_1.debug)(component.violatedPolicies
+            .map(function (elem) {
             return elem.policyName;
-        }).join("<br/>"));
-        const violatedPolicies = component.violatedPolicies.map(function (elem) {
+        })
+            .join('<br/>'));
+        const violatedPolicies = component.violatedPolicies
+            .map(function (elem) {
             return elem.policyName;
-        }).join("<br/>");
-        const componentInViolation = (component === null || component === void 0 ? void 0 : component.href) ? `[${component.name}](${component.href})` : component.name;
+        })
+            .join('<br/>');
+        const componentInViolation = (component === null || component === void 0 ? void 0 : component.href) ? `[${component.name}<br/>${component.externalId})](${component.href})` : component.name;
         (0, core_1.debug)(component.licenses.map(license => license.name).join(','));
         const componentLicenses = component.licenses.map(license => `${license.violatesPolicy ? ':x: &nbsp; ' : ''}[${license.name}](${license.href})`).join('<br/>');
         (0, core_1.debug)(component.vulnerabilities.map(vulnerability => vulnerability.name).join(','));

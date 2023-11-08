@@ -40,7 +40,7 @@ function createComponentRow(component: IComponentReport): string {
       })
       .join('<br/>')
 
-    const componentInViolation = component?.href ? `[${component.name}](${component.href})` : component.name
+    const componentInViolation = component?.href ? `[${component.name}<br/>${component.externalId})](${component.href})` : component.name
 
     debug(component.licenses.map(license => license.name).join(','))
     const componentLicenses = component.licenses.map(license => `${license.violatesPolicy ? ':x: &nbsp; ' : ''}[${license.name}](${license.href})`).join('<br/>')

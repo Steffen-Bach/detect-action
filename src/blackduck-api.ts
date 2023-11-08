@@ -61,6 +61,7 @@ export interface ICvssView {
 
 export interface IRapidScanResults {
   componentName: string
+  externalId: string
   versionName: string
   componentIdentifier: string
   violatingPolicies: IRapidScanViolatingPolicy[]

@@ -47,6 +47,7 @@ export async function createRapidScanReport(policyViolations: IRapidScanResults[
 export interface IComponentReport {
   violatedPolicies: IViolatingPolicy[]
   name: string
+  externalId: string
   href?: string
   licenses: ILicenseReport[]
   vulnerabilities: IVulnerabilityReport[]
@@ -64,6 +65,7 @@ export function createComponentReport(violation: IRapidScanResults, componentVer
   return {
     violatedPolicies: violation.violatingPolicies,
     name: `${violation.componentName} ${violation.versionName}`,
+    externalId: violation.externalId,
     href: componentVersion?._meta.href,
     licenses: createComponentLicenseReports(violation.policyViolationLicenses, componentVersion),
     vulnerabilities: createComponentVulnerabilityReports(violation.policyViolationVulnerabilities, vulnerabilities),
