@@ -26,9 +26,19 @@ function createComponentRow(component: IComponentReport): string {
     //Debug: Print out all parts of the component
     debug('Debugging component')
     debug(component.name)
-    debug(component.violatedPolicies.join(','))
+    debug(
+      component.violatedPolicies
+        .map(function (elem) {
+          return elem.policyName
+        })
+        .join('<br/>')
+    )
 
-    const violatedPolicies = component.violatedPolicies.join('<br/>')
+    const violatedPolicies = component.violatedPolicies
+      .map(function (elem) {
+        return elem.policyName
+      })
+      .join('<br/>')
 
     const componentInViolation = component?.href ? `[${component.name}](${component.href})` : component.name
 
