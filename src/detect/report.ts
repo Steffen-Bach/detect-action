@@ -45,7 +45,7 @@ export async function createRapidScanReport(policyViolations: IRapidScanResults[
   return rapidScanReport
 }
 export interface IComponentReport {
-  violatedPolicies: string[]
+  violatedPolicies: IViolatingPolicy[]
   name: string
   href?: string
   licenses: ILicenseReport[]
@@ -54,9 +54,15 @@ export interface IComponentReport {
   longTermUpgrade?: IUpgradeReport
 }
 
+export interface IViolatingPolicy {
+  description: string
+  policyName: string
+  policySeverity: string
+}
+
 export function createComponentReport(violation: IRapidScanResults, componentVersion?: IComponentVersion, upgradeGuidance?: IUpgradeGuidance, vulnerabilities?: IComponentVulnerability[]): IComponentReport {
   return {
-    violatedPolicies: violation.violatingPolicyNames,
+    violatedPolicies: violation.violatingPolicies,
     name: `${violation.componentName} ${violation.versionName}`,
     href: componentVersion?._meta.href,
     licenses: createComponentLicenseReports(violation.policyViolationLicenses, componentVersion),

@@ -336,7 +336,7 @@ function createRapidScanReport(policyViolations, blackduckApiService) {
 exports.createRapidScanReport = createRapidScanReport;
 function createComponentReport(violation, componentVersion, upgradeGuidance, vulnerabilities) {
     return {
-        violatedPolicies: violation.violatingPolicyNames,
+        violatedPolicies: violation.violatingPolicies,
         name: `${violation.componentName} ${violation.versionName}`,
         href: componentVersion === null || componentVersion === void 0 ? void 0 : componentVersion._meta.href,
         licenses: createComponentLicenseReports(violation.policyViolationLicenses, componentVersion),
@@ -461,7 +461,7 @@ function createComponentRow(component) {
     }
     catch (e) {
         (0, core_1.debug)('Error creating component row');
-        if (typeof e === "string") {
+        if (typeof e === 'string') {
             e.toUpperCase(); // works, `e` narrowed to string
         }
         else if (e instanceof Error) {

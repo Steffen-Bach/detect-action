@@ -63,12 +63,18 @@ export interface IRapidScanResults {
   componentName: string
   versionName: string
   componentIdentifier: string
-  violatingPolicyNames: string[]
+  violatingPolicies: IRapidScanViolatingPolicy[]
   policyViolationVulnerabilities: IRapidScanVulnerability[]
   policyViolationLicenses: IRapidScanLicense[]
   _meta: {
     href: string
   }
+}
+
+export interface IRapidScanViolatingPolicy {
+  description: string
+  policyName: string
+  policySeverity: string
 }
 
 export interface IRapidScanVulnerability {
