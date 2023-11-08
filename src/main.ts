@@ -22,10 +22,9 @@ export async function run() {
   }
   runWithPolicyCheck(blackduckPolicyCheck).catch(unhandledError => {
     debug('Canceling policy check because of an unhandled error  .')
-    debug("Stack of Error")
-    debug(unhandledError.stack);
+    debug('Stack of Error')
+    debug(unhandledError.stack)
     blackduckPolicyCheck.cancelCheck()
-    
 
     setFailed(`Failed due to an unhandled error : '${unhandledError}'`)
   })
