@@ -444,19 +444,32 @@ function createRapidScanReportString(policyViolations, policyCheckWillFail) {
 }
 exports.createRapidScanReportString = createRapidScanReportString;
 function createComponentRow(component) {
-    //Debug: Print out all parts of the component
-    (0, core_1.debug)("Debugging component");
-    (0, core_1.debug)(component.name);
-    (0, core_1.debug)(component.violatedPolicies.join(','));
-    const violatedPolicies = component.violatedPolicies.join('<br/>');
-    const componentInViolation = (component === null || component === void 0 ? void 0 : component.href) ? `[${component.name}](${component.href})` : component.name;
-    (0, core_1.debug)(component.licenses.map(license => license.name).join(','));
-    const componentLicenses = component.licenses.map(license => `${license.violatesPolicy ? ':x: &nbsp; ' : ''}[${license.name}](${license.href})`).join('<br/>');
-    (0, core_1.debug)(component.vulnerabilities.map(vulnerability => vulnerability.name).join(','));
-    const vulnerabilities = component.vulnerabilities.map(vulnerability => `${vulnerability.violatesPolicy ? ':x: &nbsp; ' : ''}[${vulnerability.name}](${vulnerability.href})${vulnerability.cvssScore && vulnerability.severity ? ` ${vulnerability.severity}: CVSS ${vulnerability.cvssScore}` : ''}`).join('<br/>');
-    const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
-    const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
-    return `| ${violatedPolicies} | ${componentInViolation} | ${componentLicenses} | ${vulnerabilities} | ${shortTermString} | ${longTermString} |`;
+    try {
+        //Debug: Print out all parts of the component
+        (0, core_1.debug)('Debugging component');
+        (0, core_1.debug)(component.name);
+        (0, core_1.debug)(component.violatedPolicies.join(','));
+        const violatedPolicies = component.violatedPolicies.join('<br/>');
+        const componentInViolation = (component === null || component === void 0 ? void 0 : component.href) ? `[${component.name}](${component.href})` : component.name;
+        (0, core_1.debug)(component.licenses.map(license => license.name).join(','));
+        const componentLicenses = component.licenses.map(license => `${license.violatesPolicy ? ':x: &nbsp; ' : ''}[${license.name}](${license.href})`).join('<br/>');
+        (0, core_1.debug)(component.vulnerabilities.map(vulnerability => vulnerability.name).join(','));
+        const vulnerabilities = component.vulnerabilities.map(vulnerability => `${vulnerability.violatesPolicy ? ':x: &nbsp; ' : ''}[${vulnerability.name}](${vulnerability.href})${vulnerability.cvssScore && vulnerability.severity ? ` ${vulnerability.severity}: CVSS ${vulnerability.cvssScore}` : ''}`).join('<br/>');
+        const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
+        const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
+        return `| ${violatedPolicies} | ${componentInViolation} | ${componentLicenses} | ${vulnerabilities} | ${shortTermString} | ${longTermString} |`;
+    }
+    catch (e) {
+        (0, core_1.debug)('Error creating component row');
+        if (typeof e === "string") {
+            e.toUpperCase(); // works, `e` narrowed to string
+        }
+        else if (e instanceof Error) {
+            e.message; // works, `e` narrowed to Error
+            e.stack;
+        }
+        return `|  |  |  |  | |  |`;
+    }
 }
 
 
