@@ -1,6 +1,6 @@
 import { IRapidScanResults } from '../blackduck-api'
 import { createRapidScanReport, IComponentReport } from './report'
-import { info, warning, setFailed, debug } from '@actions/core'
+import { debug } from '@actions/core'
 
 export const TABLE_HEADER = '| Policies Violated | Dependency | Transient Short Term Upgrade | Transient Long Term Upgrade | License(s) | Vulnerabilities | Direct Short Term Recommended Upgrade | Direct Long Term Recommended Upgrade |\r\n' + '|-|-|-|-|-|-|-|-|\r\n'
 
@@ -39,8 +39,8 @@ function createComponentRow(component: IComponentReport): string {
         return elem.policyName
       })
       .join('<br/>')
-    component.dependencyTrees ? component.dependencyTrees.shift() : component.dependencyTrees
-    const depTree = component.dependencyTrees ? component.dependencyTrees.join('<br/> ->') : ''
+    const depArray = component.dependencyTrees ? component.dependencyTrees.slice(1) : component.dependencyTrees
+    const depTree = depArray ? depArray.join('<br/>&rarr;') : ''
     const componentInViolation = component?.href ? `[${component.name}](${component.href})` : component.name
 
     debug(component.licenses.map(license => license.name).join(','))
@@ -56,8 +56,8 @@ function createComponentRow(component: IComponentReport): string {
     debug(shortTerm)
     const longTerm = component.longTermUpgradeGuidance ? `[${component.longTermUpgradeGuidance.externalId}](${component.longTermUpgradeGuidance.version})` : ''
     debug(longTerm)
-    const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
-    const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
+    //const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
+    //const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
 
     return `| ${violatedPolicies} |  ${componentInViolation}<br/>(${depTree}) | ${depShortTerm} | ${depLongTerm} | ${componentLicenses} | ${vulnerabilities} | ${shortTerm} | ${longTerm} |`
   } catch (e) {

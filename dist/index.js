@@ -463,8 +463,8 @@ function createComponentRow(component) {
             return elem.policyName;
         })
             .join('<br/>');
-        component.dependencyTrees ? component.dependencyTrees.shift() : component.dependencyTrees;
-        const depTree = component.dependencyTrees ? component.dependencyTrees.join('<br/> ->') : '';
+        const depArray = component.dependencyTrees ? component.dependencyTrees.slice(1) : component.dependencyTrees;
+        const depTree = depArray ? depArray.join('<br/>&rarr;') : '';
         const componentInViolation = (component === null || component === void 0 ? void 0 : component.href) ? `[${component.name}](${component.href})` : component.name;
         (0, core_1.debug)(component.licenses.map(license => license.name).join(','));
         const componentLicenses = component.licenses.map(license => `${license.violatesPolicy ? ':x: &nbsp; ' : ''}[${license.name}](${license.href})`).join('<br/>');
@@ -478,8 +478,8 @@ function createComponentRow(component) {
         (0, core_1.debug)(shortTerm);
         const longTerm = component.longTermUpgradeGuidance ? `[${component.longTermUpgradeGuidance.externalId}](${component.longTermUpgradeGuidance.version})` : '';
         (0, core_1.debug)(longTerm);
-        const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
-        const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
+        //const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
+        //const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
         return `| ${violatedPolicies} |  ${componentInViolation}<br/>(${depTree}) | ${depShortTerm} | ${depLongTerm} | ${componentLicenses} | ${vulnerabilities} | ${shortTerm} | ${longTerm} |`;
     }
     catch (e) {
