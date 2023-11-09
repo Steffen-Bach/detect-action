@@ -2,7 +2,7 @@ import { IRapidScanResults } from '../blackduck-api'
 import { createRapidScanReport, IComponentReport } from './report'
 import { info, warning, setFailed, debug } from '@actions/core'
 
-export const TABLE_HEADER = '| Policies Violated | Dependency | Dependency Tree | License(s) | Vulnerabilities | Short Term Recommended Upgrade | Long Term Recommended Upgrade |\r\n' + '|-|-|-|-|-|-|\r\n'
+export const TABLE_HEADER = '| Policies Violated | Dependency | Dependency Tree | License(s) | Vulnerabilities | Short Term Recommended Upgrade | Long Term Recommended Upgrade |\r\n' + '|-|-|-|-|-|-|-|\r\n'
 
 export async function createRapidScanReportString(policyViolations: IRapidScanResults[], policyCheckWillFail: boolean): Promise<string> {
   let message = ''
@@ -47,8 +47,14 @@ function createComponentRow(component: IComponentReport): string {
     debug(component.vulnerabilities.map(vulnerability => vulnerability.name).join(','))
     const vulnerabilities = component.vulnerabilities.map(vulnerability => `${vulnerability.violatesPolicy ? ':x: &nbsp; ' : ''}[${vulnerability.name}](${vulnerability.href})${vulnerability.cvssScore && vulnerability.severity ? ` ${vulnerability.severity}: CVSS ${vulnerability.cvssScore}` : ''}`).join('<br/>')
 
-    const depShortTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.shortTermUpgradeGuidance).join('<br/>') : ''
+    const depShortTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.shortTermUpgradeGuidance.versionName).join('<br/>') : ''
     debug(depShortTerm)
+    const depLongTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.longTermUpgradeGuidance.versionName).join('<br/>') : ''
+    debug(depLongTerm)
+    const shortTerm = component.shortTermUpgradeGuidance ? component.shortTermUpgradeGuidance.versionName : ''
+    debug(shortTerm)
+    const longTerm = component.longTermUpgradeGuidance ? component.longTermUpgradeGuidance.versionName : ''
+    debug(longTerm)
     const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
     const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
 

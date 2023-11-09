@@ -429,7 +429,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createRapidScanReportString = exports.TABLE_HEADER = void 0;
 const report_1 = __nccwpck_require__(2198);
 const core_1 = __nccwpck_require__(2186);
-exports.TABLE_HEADER = '| Policies Violated | Dependency | Dependency Tree | License(s) | Vulnerabilities | Short Term Recommended Upgrade | Long Term Recommended Upgrade |\r\n' + '|-|-|-|-|-|-|\r\n';
+exports.TABLE_HEADER = '| Policies Violated | Dependency | Dependency Tree | License(s) | Vulnerabilities | Short Term Recommended Upgrade | Long Term Recommended Upgrade |\r\n' + '|-|-|-|-|-|-|-|\r\n';
 function createRapidScanReportString(policyViolations, policyCheckWillFail) {
     return __awaiter(this, void 0, void 0, function* () {
         let message = '';
@@ -469,8 +469,14 @@ function createComponentRow(component) {
         const componentLicenses = component.licenses.map(license => `${license.violatesPolicy ? ':x: &nbsp; ' : ''}[${license.name}](${license.href})`).join('<br/>');
         (0, core_1.debug)(component.vulnerabilities.map(vulnerability => vulnerability.name).join(','));
         const vulnerabilities = component.vulnerabilities.map(vulnerability => `${vulnerability.violatesPolicy ? ':x: &nbsp; ' : ''}[${vulnerability.name}](${vulnerability.href})${vulnerability.cvssScore && vulnerability.severity ? ` ${vulnerability.severity}: CVSS ${vulnerability.cvssScore}` : ''}`).join('<br/>');
-        const depShortTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.shortTermUpgradeGuidance).join('<br/>') : '';
+        const depShortTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.shortTermUpgradeGuidance.versionName).join('<br/>') : '';
         (0, core_1.debug)(depShortTerm);
+        const depLongTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.longTermUpgradeGuidance.versionName).join('<br/>') : '';
+        (0, core_1.debug)(depLongTerm);
+        const shortTerm = component.shortTermUpgradeGuidance ? component.shortTermUpgradeGuidance.versionName : '';
+        (0, core_1.debug)(shortTerm);
+        const longTerm = component.longTermUpgradeGuidance ? component.longTermUpgradeGuidance.versionName : '';
+        (0, core_1.debug)(longTerm);
         const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
         const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
         return `| ${violatedPolicies} |  ${componentInViolation} | ${depTree} | ${componentLicenses} | ${vulnerabilities} | ${shortTermString} | ${longTermString} |`;
