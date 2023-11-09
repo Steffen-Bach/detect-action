@@ -429,7 +429,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createRapidScanReportString = exports.TABLE_HEADER = void 0;
 const report_1 = __nccwpck_require__(2198);
 const core_1 = __nccwpck_require__(2186);
-exports.TABLE_HEADER = '| Policies Violated | Dependency | Transient Short Term Upgrade | License(s) | Vulnerabilities | Short Term Recommended Upgrade | Long Term Recommended Upgrade |\r\n' + '|-|-|-|-|-|-|-|\r\n';
+exports.TABLE_HEADER = '| Policies Violated | Dependency | Transient Short Term Upgrade | Transient Long Term Upgrade | License(s) | Vulnerabilities | Direct Short Term Recommended Upgrade | Direct Long Term Recommended Upgrade |\r\n' + '|-|-|-|-|-|-|-|-|\r\n';
 function createRapidScanReportString(policyViolations, policyCheckWillFail) {
     return __awaiter(this, void 0, void 0, function* () {
         let message = '';
@@ -465,7 +465,7 @@ function createComponentRow(component) {
             .join('<br/>');
         component.dependencyTrees ? component.dependencyTrees.shift() : component.dependencyTrees;
         const depTree = component.dependencyTrees ? component.dependencyTrees.join('<br/> ->') : '';
-        const componentInViolation = (component === null || component === void 0 ? void 0 : component.href) ? `[${component.name}<br/>(${depTree})](${component.href})` : component.name;
+        const componentInViolation = (component === null || component === void 0 ? void 0 : component.href) ? `[${component.name}](${component.href})` : component.name;
         (0, core_1.debug)(component.licenses.map(license => license.name).join(','));
         const componentLicenses = component.licenses.map(license => `${license.violatesPolicy ? ':x: &nbsp; ' : ''}[${license.name}](${license.href})`).join('<br/>');
         (0, core_1.debug)(component.vulnerabilities.map(vulnerability => vulnerability.name).join(','));
@@ -474,13 +474,13 @@ function createComponentRow(component) {
         (0, core_1.debug)(depShortTerm);
         const depLongTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.longTermUpgradeGuidance.externalId).join('<br/>') : '';
         (0, core_1.debug)(depLongTerm);
-        const shortTerm = component.shortTermUpgradeGuidance ? `[${component.shortTermUpgradeGuidance.externalId}](${component.shortTermUpgradeGuidance.version}` : '';
+        const shortTerm = component.shortTermUpgradeGuidance ? `[${component.shortTermUpgradeGuidance.externalId}](${component.shortTermUpgradeGuidance.version})` : '';
         (0, core_1.debug)(shortTerm);
-        const longTerm = component.longTermUpgradeGuidance ? `[${component.longTermUpgradeGuidance.externalId}](${component.longTermUpgradeGuidance.version}` : '';
+        const longTerm = component.longTermUpgradeGuidance ? `[${component.longTermUpgradeGuidance.externalId}](${component.longTermUpgradeGuidance.version})` : '';
         (0, core_1.debug)(longTerm);
         const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
         const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : '';
-        return `| ${violatedPolicies} |  ${componentInViolation} | ${depShortTerm} | ${componentLicenses} | ${vulnerabilities} | ${shortTerm} | ${longTerm} |`;
+        return `| ${violatedPolicies} |  ${componentInViolation}<br/>(${depTree}) | ${depShortTerm} | ${depLongTerm} | ${componentLicenses} | ${vulnerabilities} | ${shortTerm} | ${longTerm} |`;
     }
     catch (e) {
         (0, core_1.debug)('Error creating component row');
