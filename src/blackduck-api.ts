@@ -67,9 +67,33 @@ export interface IRapidScanResults {
   violatingPolicies: IRapidScanViolatingPolicy[]
   policyViolationVulnerabilities: IRapidScanVulnerability[]
   policyViolationLicenses: IRapidScanLicense[]
+  dependencyTrees: IDepdendencyTree[]
+  longTermUpgradeGuidance: IRapidScanUpgradeGuidance
+  shortTermUpgradeGuidance: IRapidScanUpgradeGuidance
+  transitiveUpgradeGuidance: IRapidScanTransitiveUpgradeGuidance[]
   _meta: {
     href: string
   }
+}
+
+export interface IRapidScanTransitiveUpgradeGuidance {
+  componentName: string
+  externalId: string
+  versionName: string
+  componentIdentifier: string
+  longTermUpgradeGuidance: IRapidScanUpgradeGuidance
+  shortTermUpgradeGuidance: IRapidScanUpgradeGuidance
+}
+
+export interface IRapidScanUpgradeGuidance {
+  externalId: string
+  version: string
+  versionName: string
+  vulnerabilityRisk: Object
+}
+
+export interface IDepdendencyTree {
+  dependencies: string[]
 }
 
 export interface IRapidScanViolatingPolicy {

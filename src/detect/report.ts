@@ -53,6 +53,30 @@ export interface IComponentReport {
   vulnerabilities: IVulnerabilityReport[]
   shortTermUpgrade?: IUpgradeReport
   longTermUpgrade?: IUpgradeReport
+  dependencyTrees: IComponentDepdendencyTree[]
+  longTermUpgradeGuidance: IComponentUpgradeGuidance
+  shortTermUpgradeGuidance: IComponentUpgradeGuidance
+  transitiveUpgradeGuidance: ITransitiveUpgradeGuidance[]
+}
+
+export interface ITransitiveUpgradeGuidance {
+  componentName: string
+  externalId: string
+  versionName: string
+  componentIdentifier: string
+  longTermUpgradeGuidance: IComponentUpgradeGuidance
+  shortTermUpgradeGuidance: IComponentUpgradeGuidance
+}
+
+export interface IComponentUpgradeGuidance {
+  externalId: string
+  version: string
+  versionName: string
+  vulnerabilityRisk: object
+}
+
+export interface IComponentDepdendencyTree {
+  dependencies: string[]
 }
 
 export interface IViolatingPolicy {
@@ -70,7 +94,11 @@ export function createComponentReport(violation: IRapidScanResults, componentVer
     licenses: createComponentLicenseReports(violation.policyViolationLicenses, componentVersion),
     vulnerabilities: createComponentVulnerabilityReports(violation.policyViolationVulnerabilities, vulnerabilities),
     shortTermUpgrade: createUpgradeReport(upgradeGuidance?.shortTerm),
-    longTermUpgrade: createUpgradeReport(upgradeGuidance?.longTerm)
+    longTermUpgrade: createUpgradeReport(upgradeGuidance?.longTerm),
+    dependencyTrees: violation.dependencyTrees,
+    longTermUpgradeGuidance: violation.longTermUpgradeGuidance,
+    shortTermUpgradeGuidance: violation.shortTermUpgradeGuidance,
+    transitiveUpgradeGuidance: violation.transitiveUpgradeGuidance
   }
 }
 
