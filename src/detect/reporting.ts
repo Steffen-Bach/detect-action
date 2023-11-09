@@ -2,7 +2,7 @@ import { IRapidScanResults } from '../blackduck-api'
 import { createRapidScanReport, IComponentReport } from './report'
 import { info, warning, setFailed, debug } from '@actions/core'
 
-export const TABLE_HEADER = '| Policies Violated | Dependency | Dependency Tree | License(s) | Vulnerabilities | Short Term Recommended Upgrade | Long Term Recommended Upgrade |\r\n' + '|-|-|-|-|-|-|-|\r\n'
+export const TABLE_HEADER = '| Policies Violated | Dependency | Transient Short Term Upgrade | License(s) | Vulnerabilities | Short Term Recommended Upgrade | Long Term Recommended Upgrade |\r\n' + '|-|-|-|-|-|-|-|\r\n'
 
 export async function createRapidScanReportString(policyViolations: IRapidScanResults[], policyCheckWillFail: boolean): Promise<string> {
   let message = ''
@@ -39,26 +39,27 @@ function createComponentRow(component: IComponentReport): string {
         return elem.policyName
       })
       .join('<br/>')
+    component.dependencyTrees ? component.dependencyTrees.shift() : component.dependencyTrees
+    const depTree = component.dependencyTrees ? component.dependencyTrees.join('<br/> ->') : ''
+    const componentInViolation = component?.href ? `[${component.name}<br/>(${depTree})](${component.href})` : component.name
 
-    const componentInViolation = component?.href ? `[${component.name}<br/>${component.externalId})](${component.href})` : component.name
-    const depTree = component.dependencyTrees ? component.dependencyTrees.join('<br/>') : ''
     debug(component.licenses.map(license => license.name).join(','))
     const componentLicenses = component.licenses.map(license => `${license.violatesPolicy ? ':x: &nbsp; ' : ''}[${license.name}](${license.href})`).join('<br/>')
     debug(component.vulnerabilities.map(vulnerability => vulnerability.name).join(','))
     const vulnerabilities = component.vulnerabilities.map(vulnerability => `${vulnerability.violatesPolicy ? ':x: &nbsp; ' : ''}[${vulnerability.name}](${vulnerability.href})${vulnerability.cvssScore && vulnerability.severity ? ` ${vulnerability.severity}: CVSS ${vulnerability.cvssScore}` : ''}`).join('<br/>')
 
-    const depShortTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.shortTermUpgradeGuidance.versionName).join('<br/>') : ''
+    const depShortTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.shortTermUpgradeGuidance.externalId).join('<br/>') : ''
     debug(depShortTerm)
-    const depLongTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.longTermUpgradeGuidance.versionName).join('<br/>') : ''
+    const depLongTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.longTermUpgradeGuidance.externalId).join('<br/>') : ''
     debug(depLongTerm)
-    const shortTerm = component.shortTermUpgradeGuidance ? component.shortTermUpgradeGuidance.versionName : ''
+    const shortTerm = component.shortTermUpgradeGuidance ? `[${component.shortTermUpgradeGuidance.externalId}](${component.shortTermUpgradeGuidance.version}` : ''
     debug(shortTerm)
-    const longTerm = component.longTermUpgradeGuidance ? component.longTermUpgradeGuidance.versionName : ''
+    const longTerm = component.longTermUpgradeGuidance ? `[${component.longTermUpgradeGuidance.externalId}](${component.longTermUpgradeGuidance.version}` : ''
     debug(longTerm)
     const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
     const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
 
-    return `| ${violatedPolicies} |  ${componentInViolation} | ${depTree} | ${componentLicenses} | ${vulnerabilities} | ${shortTermString} | ${longTermString} |`
+    return `| ${violatedPolicies} |  ${componentInViolation} | ${depShortTerm} | ${componentLicenses} | ${vulnerabilities} | ${shortTerm} | ${longTerm} |`
   } catch (e) {
     debug('Error creating component row')
     if (typeof e === 'string') {
