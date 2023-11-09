@@ -39,23 +39,18 @@ function createComponentRow(component: IComponentReport): string {
         return elem.policyName
       })
       .join('<br/>')
-    const depArray = component.dependencyTrees ? component.dependencyTrees.slice(1) : component.dependencyTrees
-    const depTree = depArray ? depArray.join('<br/>&rarr;') : ''
+    //const depArray = component.dependencyTrees ? component.dependencyTrees.slice(1) : component.dependencyTrees
+    const depTree = component.dependencyTrees ? component.dependencyTrees.join('<br/>&rarr;') : ''
     const componentInViolation = component?.href ? `[${component.name}](${component.href})` : component.name
 
     debug(component.licenses.map(license => license.name).join(','))
     const componentLicenses = component.licenses.map(license => `${license.violatesPolicy ? ':x: &nbsp; ' : ''}[${license.name}](${license.href})`).join('<br/>')
-    debug(component.vulnerabilities.map(vulnerability => vulnerability.name).join(','))
     const vulnerabilities = component.vulnerabilities.map(vulnerability => `${vulnerability.violatesPolicy ? ':x: &nbsp; ' : ''}[${vulnerability.name}](${vulnerability.href})${vulnerability.cvssScore && vulnerability.severity ? ` ${vulnerability.severity}: CVSS ${vulnerability.cvssScore}` : ''}`).join('<br/>')
-
     const depShortTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.shortTermUpgradeGuidance.externalId).join('<br/>') : ''
-    debug(depShortTerm)
     const depLongTerm = component.transitiveUpgradeGuidance ? component.transitiveUpgradeGuidance.map(transitive => transitive.longTermUpgradeGuidance.externalId).join('<br/>') : ''
-    debug(depLongTerm)
     const shortTerm = component.shortTermUpgradeGuidance ? `[${component.shortTermUpgradeGuidance.externalId}](${component.shortTermUpgradeGuidance.version})` : ''
-    debug(shortTerm)
     const longTerm = component.longTermUpgradeGuidance ? `[${component.longTermUpgradeGuidance.externalId}](${component.longTermUpgradeGuidance.version})` : ''
-    debug(longTerm)
+
     //const shortTermString = component.shortTermUpgrade ? `[${component.shortTermUpgrade.name}](${component.shortTermUpgrade.href}) (${component.shortTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
     //const longTermString = component.longTermUpgrade ? `[${component.longTermUpgrade.name}](${component.longTermUpgrade.href}) (${component.longTermUpgrade.vulnerabilityCount} known vulnerabilities)` : ''
 
